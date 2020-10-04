@@ -1,5 +1,4 @@
-#ifndef PREVIEWWIDGET_H
-#define PREVIEWWIDGET_H
+#pragma once
 
 #include <QMainWindow>
 #include <QString>
@@ -140,6 +139,4 @@ protected:
 	int mMouseDownY;
 };
 
-extern class lcPreviewWidget* gPreviewWidget;
-
-#endif // PREVIEWWIDGET_H
+extern lcPreviewWidget* gPreviewWidget;
