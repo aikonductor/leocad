@@ -46,8 +46,7 @@ void lcPreviewDockWidget::ClearPreview()
 
 lcPreviewWidget::lcPreviewWidget()
 	: mLoader(new Project(true/*IsPreview*/)),
-	mViewSphere(this/*Preview*/),
-	mIsPart(false)
+	mViewSphere(this/*Preview*/)
 {
 	mTool = LC_TOOL_SELECT;
 	mTrackTool = LC_TRACKTOOL_NONE;
@@ -72,9 +71,9 @@ bool lcPreviewWidget::SetCurrentPiece(const QString& PartType, int ColorCode)
 {
 	lcPiecesLibrary* Library = lcGetPiecesLibrary();
 	PieceInfo* Info = Library->FindPiece(PartType.toLatin1().constData(), nullptr, false, false);
+
 	if (Info)
 	{
-		mIsPart = true;
 		mDescription = Info->m_strDescription;
 		lcModel* ActiveModel = GetActiveModel();
 
@@ -84,24 +83,18 @@ bool lcPreviewWidget::SetCurrentPiece(const QString& PartType, int ColorCode)
 		Library->LoadPieceInfo(Info, false, true);
 		Library->WaitForLoadQueue();
 
-		float* Matrix = lcMatrix44Identity();;
-		lcMatrix44 Transform(lcVector4(Matrix[0], Matrix[2], -Matrix[1], 0.0f), lcVector4(Matrix[8], Matrix[10], -Matrix[9], 0.0f),
-			lcVector4(-Matrix[4], -Matrix[6], Matrix[5], 0.0f), lcVector4(Matrix[12], Matrix[14], -Matrix[13], 1.0f));
-
-		int CurrentStep = 1;
+		lcStep CurrentStep = 1;
 		lcPiece* Piece = new lcPiece(nullptr);
 
 		Piece->SetPieceInfo(Info, PartType, false);
-		Piece->Initialize(Transform, CurrentStep);
+		Piece->Initialize(lcMatrix44Identity(), CurrentStep);
 		Piece->SetColorCode(ColorCode);
 
 		ActiveModel->SetPreviewPiece(Piece);
 	}
 	else
 	{
-		QString ModelPath = QString("%1/%2")
-			.arg(QDir::currentPath())
-			.arg(PartType);
+		QString ModelPath = QString("%1/%2").arg(QDir::currentPath()).arg(PartType);
 
 		if (!mLoader->Load(ModelPath))
 		{
@@ -117,6 +110,7 @@ bool lcPreviewWidget::SetCurrentPiece(const QString& PartType, int ColorCode)
 		else
 			mDescription = PartType;
 	}
+
 	ZoomExtents();
 
 	return true;

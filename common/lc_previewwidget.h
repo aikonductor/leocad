@@ -133,7 +133,6 @@ protected:
 
 	QString mDescription;
 
-	bool mIsPart;
 	bool mTrackUpdated;
 	int mMouseDownX;
 	int mMouseDownY;
